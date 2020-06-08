@@ -6,7 +6,7 @@ const categoryController = require('../controllers/categoryController.js')
 const timerHistoryController = require('../controllers/timerHistoryController.js')
 const userController = require('../controllers/userController.js')
 
-router.get('/', userController.validateUser, categoryController.getCategory, projectsController.getProjects, timerHistoryController.getTimerHistory, (req, res) => {
+router.post('/', userController.validateUser, categoryController.getCategory, projectsController.getProjects, timerHistoryController.getTimerHistory, (req, res) => {
   res.status(200).json({
     user: res.locals.user,
     categories: res.locals.categories,

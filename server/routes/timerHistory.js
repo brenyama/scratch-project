@@ -3,8 +3,8 @@ const router = express.Router();
 
 const timerHistoryController = require('../controllers/timerHistoryController.js')
 
-router.post('/', timerHistoryController.createTimerEntry, (req, res) => {
-  res.status(201).json('timer entry added!');
+router.post('/', timerHistoryController.createTimerEntry, timerHistoryController.getTimerHistory, (req, res) => {
+  res.status(201).json(res.locals.timerHistory);
 })
 
 router.get('/', timerHistoryController.getTimerHistory, (req, res) => {
