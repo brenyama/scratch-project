@@ -10,7 +10,7 @@ userController.createUser = (req, res, next) => {
   const queryText = `
     INSERT INTO users (account_name, password)
     VALUES ($1, $2)
-    RETURNING _id
+    RETURNING account_name, _id
   `
   const { username, password } = req.body;
   
@@ -60,6 +60,7 @@ userController.validateUser = (req, res, next) => {
 
       const dbUser = data.rows[0]
 
+      // USE THIS FOR NON-HASHED PASSWORD ACCOUNTS
       // check password make this more secure later with bcrypt 
       // if (dbUser.password === password) {
       //   res.locals.user = {
@@ -70,22 +71,26 @@ userController.validateUser = (req, res, next) => {
       // }
 
       bcrypt.compare(password, dbUser.password, (err, result) => {
+          if (err) return next({
+            log: 'Error in userController.validateUser',
+            status: 400,
+            message: err,
+          })
 
-          if (result == true) {
+          if (result === true) {
             res.locals.user = {
               account_name: dbUser.account_name,
-              _id: dbUser_id
+              _id: dbUser._id
             }
             return next();
+          } else {
+            return next({
+              log: 'Error in userController.validateUser',
+              status: 400,
+              message: 'password did not match',
+            })
           }
-      })
-;
-      return next({
-        log: 'Error in userController.validateUser',
-        status: 400,
-        message: 'password did not match',
-      })
-
+      });
     }).catch(err => next({
       log: 'Error in userController.validateUser',
       status: 400,
